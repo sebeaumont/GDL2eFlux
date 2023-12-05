@@ -1,0 +1,9 @@
+#+TITLE: Multilayer Perceptron - CIFAR-10 Image Classification Task 
+#+AUTHOR: Simon Beaumont
+#+EMAIL: datalligator@icloud.com
+
+#+BIBLIOGRAPHY: ../citations.bib
+#+STARTUP: inlineimages overview latexpreview indent entitiespretty 
+#+PROPERTY: header-args:jupyter-julia :session "jl" :async yes :kernel gdl2eflux-1.9
+
+TODO: Install MLDatasets package for cifar-10 module

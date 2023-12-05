@@ -1,7 +1,7 @@
 # GDL2eFlux
-Following examples from [David Foster's Generative Deep Learning (2nd. Edition)](https://github.com/davidADSP/Generative_Deep_Learning_2nd_Edition) 
+Following [David Foster's Generative Deep Learning (2nd. Edition)](https://github.com/davidADSP/Generative_Deep_Learning_2nd_Edition) 
 
-Julia-Flux version 
+## Julia-Flux Examples
 
 Which means I get to learn Julia and Flux as well as how these models
 perform. This will help me choose tooling for an upcoming project.
@@ -20,21 +20,25 @@ from the original Tensorflow/Keras in the book cited. I reserve the
 right to depart from that script and explore avenues more relevant to
 my misison.
 
-I will be repeating this exercise in Jax/Flax (Python) so we will have
-GDL2E cooked three ways and hopefully a better understanding of the
-merits of each framework and language. 
+I will also be repeating this exercise in Jax/Flax (Python) so we will
+have seen GDL2E cooked three ways and hopefully a better understanding
+of the merits of each framework and language.
 
 I'll be developing the prototype application as I go in Julia as I
-know Python and I'd like to give Julia a try. 
+know Python and I'd like to give Julia a try first. 
 
 I won't be using the ubiquitous Jupyter notebook format. All my
-stuff will be in org files using jupyter-emacs for the backends. 
+sources will be in org files using jupyter-emacs for the backends. 
 This means I can mix kernels (languages and environments) willy nilly
 and write notes so that source code can be tangled and documents
-extracted. YMMV.
+extracted. YMMV. See [here](INSTALL.org) for how I make this work.
 
-____
-Colophon, citations and references to follow in replacement README.org
+____ 
 
+I acknowledge all copyrights of the respective authors of cited works
+and quotations. Simon Beaumont - England, December 2023
+All work here is provided for Research Purposes Only
+
+[Biliography](citations.bib)
 
 
