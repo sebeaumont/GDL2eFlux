@@ -1,0 +1,74 @@
+* Setting up the Julia Project and A Jupyter Kernel
+
+These insstructions assume you have installed a recent version of
+Julia via whatever package manager or means suitable for your
+platform. See: [[www.julialang.org]] for how this might go.
+
+Also you will have already installed at least /jupyter-kernel/ package via
+whatever python means and that the /jupyter/ command is available.
+
+We assume a unix-like shell environment for the command line.  
+
+** Basic setup
+
+0. Checkout this project into a suitable directory using /git/
+   #+begin_src
+   git clone https://github.com/sebeaumont/GDL2eFlux.git
+   #+end_src
+   
+1. Start Julia with that directory as the project:
+   #+begin_src
+   julia --project=GDL2eFlux
+   #+end_src
+
+2. At the julia prompt type ] to get into the package manager
+   #+begin_src julia
+   instantiate # will install all the package dependencies including IJulia
+   #+end_src
+   backspace to get back to the julia prompt and create a julia kernel
+   using [[https://julialang.github.io/IJulia.jl/stable/][IJulia package]].
+   #+begin_src julia
+   using IJulia
+   installkernel("{great-name-for-kernel}[gdl2eflux]", "--project={absolute-path to the directory[GDL2eFlux]}")
+   #+end_src
+   There's a bunch of other stuff you can do to the Julia kernel setup
+   so it's worth RTM for IJulia if you want to do this kind of thing
+   for work. Exit julia.
+
+3. Back at the command prompt:
+   #+begin_src
+   jupyter kernelspec list
+   #+end_src
+   Should list all the kernels including the one you just created. We
+   are good to go...
+
+** Now the world is your oyster
+
+So there are a number of possibilites now depending on your persuation
+from a development tooling point of view. Personally I am a die hard
+/emacs/ jock of forty years - I've been impressed with /VSCode/ but
+that now looks like typical /M$/ sponsored bloatware, as indeed is the
+/LSP/.
+
+If you do decide that /emacs/ is the way, then as far as literate
+programming, /org-mode/ and /jupyter-emacs/ will be the guiding
+light on the path to Nirvana. Also /julia-snail/ is good for
+developing julia in the raw.
+
+I'm sure there are other routes less travelled but that's enough
+doctrine for now.
+
+The files in the /org/ directory are the masters for this
+project. Straight Julia source modules will be tangled from them where
+reuse makes sense: /src/
+
+I might provide /pluto.jl/ notebooks if someone pays me. Or I might
+figure out an easy way to tangle them from the org files.
+
+As a source format for code, notebooks are a misfeature resulting from
+/Mathematica/ envy. Form and function should be cleanly separated. Of
+course scientific programmers never knew this.
+
+The best option we have in 2013 for literate programming is /org/ it just
+takes a bit more effort.
+
