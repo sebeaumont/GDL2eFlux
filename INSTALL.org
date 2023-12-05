@@ -1,11 +1,12 @@
 * Setting up the Julia Project and A Jupyter Kernel
 
-These insstructions assume you have installed a recent version of
-Julia via whatever package manager or means suitable for your
+These instructions assume you have installed a recent version of
+/Julia/ via whatever package manager or means suitable for your
 platform. See: [[www.julialang.org]] for how this might go.
 
 Also you will have already installed at least /jupyter-kernel/ package via
-whatever python means and that the /jupyter/ command is available.
+whatever python/packaging means such that the /jupyter/ command is
+available.
 
 We assume a unix-like shell environment for the command line.  
 
@@ -39,8 +40,10 @@ We assume a unix-like shell environment for the command line.
    #+begin_src
    jupyter kernelspec list
    #+end_src
-   Should list all the kernels including the one you just created. We
-   are good to go...
+   Should list all the kernels including the one /IJulia/ just created. We
+   are good to go... keep a note of the kernel name it will be used in
+   our /org-babel/ source block setup file: [[org/julia-jupyter.org]] if
+   going the /emacs-org/ way. 
 
 ** Now the world is your oyster
 

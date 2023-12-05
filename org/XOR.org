@@ -1,20 +1,22 @@
-#+TITLE: Multilayer Perceptron XOR 
+#+TITLE: Multilayer Perceptron - XOR Task
 #+AUTHOR: Simon Beaumont
 #+EMAIL: datalligator@icloud.com
+#+SETUPFILE: org-source-setup.org
 
-#+BIBLIOGRAPHY: ../citations.bib
-#+STARTUP: inlineimages overview latexpreview indent entitiespretty 
-#+PROPERTY: header-args:jupyter-julia :session "jl" :async yes :kernel gdl2eflux-1.9
+Example MLP from the /Flux Quick Start documentation/.
 
-Example MLP from the Flux Quick Start documentation, hopefully we've already got
-everything we need installed into our project package and a suitable Jupyter
-kernel setup to use this environment. If not see [[../INSTALL.org][how to set up environment]].
+Hopefully we've already got everything we need installed into our
+project package and a suitable /Jupyter/ kernel to use this
+environment. If not see [[../INSTALL.org][how to set up environment]].
+
+The real source of this /HelloANNWorld/ is here and I merely reproduce
+it in org source form as a test of the setup:
 
 [[[[https://fluxml.ai/Flux.jl/stable/models/quickstart/#man-quickstart]]]]
 
 * A Neural Network in One Minute
 If you have used neural networks before, then this simple example
-might be helpful for seeing how the major parts of Flux work together.
+might be helpful for seeing how the major parts of /Flux/ work together.
 
 #+BEGIN_SRC jupyter-julia
 
