@@ -41,9 +41,8 @@ We assume a unix-like shell environment for the command line.
    jupyter kernelspec list
    #+end_src
    Should list all the kernels including the one /IJulia/ just created. We
-   are good to go... keep a note of the kernel name it will be used in
-   our /org-babel/ source block setup file: [[org/julia-jupyter.org]] if
-   going the /emacs-org/ way. 
+   are good to go... keep a note of the kernel name it should be referenced in
+   our /org/ setup file for /jupyter-julia/ source code blocks: [[org/org-source-setup.org][here]] if required.
 
 ** Now the world is your oyster
 
