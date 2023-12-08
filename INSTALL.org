@@ -2,11 +2,11 @@
 
 These instructions assume you have installed a recent version of
 /Julia/ via whatever package manager or means suitable for your
-platform. See: [[www.julialang.org]] for how this might go.
+platform. See: [[https://julialang.org][Julia Language site]] for how this might go.
 
 Also you will have already installed at least /jupyter-kernel/ package via
 whatever python/packaging means such that the /jupyter/ command is
-available.
+available. See [[https://jupyter.org][here]] if any of this is mysterious.
 
 We assume a unix-like shell environment for the command line.  
 
@@ -22,7 +22,7 @@ We assume a unix-like shell environment for the command line.
    julia --project=GDL2eFlux
    #+end_src
 
-2. At the julia prompt type ] to get into the package manager
+2. At the @Julia>@ prompt type: @]@ to get into the package manager
    #+begin_src julia
    instantiate # will install all the package dependencies including IJulia
    #+end_src
@@ -46,11 +46,11 @@ We assume a unix-like shell environment for the command line.
 
 ** Now the world is your oyster
 
-So there are a number of possibilites now depending on your persuation
-from a development tooling point of view. Personally I am a die hard
-/emacs/ jock of forty years - I've been impressed with /VSCode/ but
-that now looks like typical /M$/ sponsored bloatware, as indeed is the
-/LSP/.
+So there are a number of possibilites available now depending on your
+persuation from a development tooling point of view. Personally I am a
+die hard /emacs/ jock of forty years - I've been impressed with
+/VSCode/ but that now looks like typical /M$/ sponsored bloatware, as
+indeed is the /LSP/.
 
 If you do decide that /emacs/ is the way, then as far as literate
 programming, /org-mode/ and /jupyter-emacs/ will be the guiding
@@ -64,13 +64,11 @@ The files in the /org/ directory are the masters for this
 project. Straight Julia source modules will be tangled from them where
 reuse makes sense: /src/
 
-I might provide /pluto.jl/ notebooks if someone pays me. Or I might
-figure out an easy way to tangle them from the org files.
+I might provide /Pluto.jl/ or /Jupyter/ notebooks if I can figure out
+an easy way to tangle them from the org files but it's not a priority.
 
-As a source format for code, notebooks are a misfeature resulting from
-/Mathematica/ envy. Form and function should be cleanly separated. Of
-course scientific programmers never knew this.
-
-The best option we have in 2013 for literate programming is /org/ it just
-takes a bit more effort.
+The best option /emacs/ users have for literate programming is /org/ it
+just takes a bit more effort. /Jupyter/ is pretty cool though and I
+guess we could tangle the code out from the /json/. I just don't like
+editing code in a browser (or even an IDE for that matter). 
 

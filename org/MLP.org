@@ -1,9 +1,120 @@
 #+TITLE: Multilayer Perceptron - CIFAR-10 Image Classification Task 
 #+AUTHOR: Simon Beaumont
 #+EMAIL: datalligator@icloud.com
+#+SETUPFILE: org-source-setup.org
 
-#+BIBLIOGRAPHY: ../citations.bib
-#+STARTUP: inlineimages overview latexpreview indent entitiespretty 
-#+PROPERTY: header-args:jupyter-julia :session "jl" :async yes :kernel gdl2eflux-1.9
+* MLP CIFAR-10 Image Classification Task (GDL2e Chapter 2)
 
-TODO: Install MLDatasets package for cifar-10 module
+** First some basic setup functions
+
+0. Flux and co.
+#+begin_src jupyter-julia
+using Flux, Metal, Statistics, ProgressMeter
+#+end_src
+
+#+RESULTS:
+
+1. Get the CIFAR10 image data
+#+begin_src jupyter-julia
+using MLDatasets: CIFAR10
+
+# Get the 60,000 32x32 pixel color image data
+function cifar10_data() 
+    # Split the 60,000 images into training and testing observations
+    # and make sure we have normalized Float32 pixel data.
+    (CIFAR10(Tx=Float32, split=:train), CIFAR10(Tx=Float32, split=:test))
+end
+#+end_src
+
+#+RESULTS:
+: cifar10_data (generic function with 1 method)
+2. Create one-hot encoding of targets/labels
+#+begin_src jupyter-julia 
+function onehotlabels(data ::CIFAR10)
+    onehotbatch(data.targets, range(extrema(data.targets)...))
+end
+#+end_src
+
+#+RESULTS:
+: onehotlabels (generic function with 1 method)
+
+3. The first model from GDL2e Chapter 2
+
+   Note: [[https://fluxml.ai/Flux.jl/stable/models/nnlib/#NNlib.softmax][softmax]] must not be passed to layers like Dense which accept
+   an activation function, as activation is broadcasted; if you get
+   errors dispatching softmax this might be the problem.
+   
+#+begin_src jupyter-julia
+function makemodel()
+    Chain(Dense(32^2 * 3 => 200, relu),
+          Dense(200 => 150, relu),
+          Dense(150 => 10),
+          softmax)
+end
+#+end_src
+
+#+RESULTS:
+: makemodel (generic function with 1 method)
+
+4. Flatten image data into vectors
+#+begin_src jupyter-julia
+function vecfeatures(data::CIFAR10)
+    # TODO make this generic to data shapes
+    reshape(data.features, 32^2 * 3, :)
+end
+#+end_src
+
+#+RESULTS:
+: vecfeatures (generic function with 1 method)
+
+5. Dataloader
+#+begin_src jupyter-julia
+function loader(data::CIFAR10)
+    x = vecfeatures(data)
+    y = onehotlabels(data)
+    Flux.DataLoader((x, y); batchsize, shuffle=true)
+end
+#+end_src
+
+#+RESULTS:
+: loader (generic function with 1 method)
+
+#+begin_src jupyter-julia
+function accuracy(model, data::CIFAR10)
+    (x, y) = only(loader(data; batchsize=(length(data))))
+    y_hat = model(x)
+    iscorrect = Flux.onecold(y_hat) .== Flux.onecold(y)
+    round(100 * mean(iscorrect); digits=2)
+end
+#+end_src
+
+#+RESULTS:
+: accuracy (generic function with 1 method)
+
+** Let's put those functions to work to train the model network.
+
+#+begin_src jupyter-julia
+function trainwith(train_data::CIFAR10)
+    # TODO parameterize: epochs, training rate and batchsize
+    model = makemodel()
+    train_loader = loader(train_data, batchsize=32)
+    # optimizer state with training rate
+    opt_state = Flux.setup(Adam(5e-4), model)
+
+    @showprogress for epoch in 1:10
+        loss = 0.0
+        for (x, y) in train_loader
+            # compute loss and gradients
+            l, gs = Flux.withgradient(m -> Flux.crossentropy(m(x), y), model)
+            # update model parameters
+            Flux.update!(opt_state, model, gs[1]) # if gs are gradients what is [1]?
+            # accumulate mean loss for logging
+            loss += l / length(train_loader)
+        end
+    end
+    return model
+end
+#+end_src
+
+#+RESULTS:
+: trainwith (generic function with 1 method)
