@@ -100,21 +100,71 @@ function trainwith(train_data::CIFAR10)
     train_loader = loader(train_data, batchsize=32)
     # optimizer state with training rate
     opt_state = Flux.setup(Adam(5e-4), model)
-
+    losses = [] # keep track of loss at each epoch
+    
     @showprogress for epoch in 1:10
-        loss = 0.0
         for (x, y) in train_loader
             # compute loss and gradients
             l, gs = Flux.withgradient(m -> Flux.crossentropy(m(x), y), model)
             # update model parameters
             Flux.update!(opt_state, model, gs[1]) # if gs are gradients what is [1]?
-            # accumulate mean loss for logging
-            loss += l / length(train_loader)
+            # accumulate losses for logging
+            push!(losses, l)
         end
     end
-    return model
+    return (model, losses, length(train_loader))
 end
 #+end_src
 
 #+RESULTS:
 : trainwith (generic function with 1 method)
+
+** Main train and test
+#+begin_src jupyter-julia
+using Plots
+
+function trainandtest()
+    @info "Loading CIFAR10 data..."
+    train, test = cifar10_data()
+    @info "Training..."
+    (trained, losses, n) = trainwith(train)
+    @info "Model:" trained
+    @info "Accuracy:" accuracy(trained, train) accuracy(trained, test)
+    # output a plot of loss
+    plot(losses; xaxis=(:log10, "iteration"),
+         yaxis="loss", label="per batch")
+    # mean loss for epoch
+    plot!(n:n:length(losses), mean.(Iterators.partition(losses, n)),
+          label="epoch mean", dpi=200)
+end
+#+end_src
+
+#+RESULTS:
+: trainandtest (generic function with 1 method)
+
+** Train and test the results
+#+begin_src jupyter-julia
+trainandtest()
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+: [ Info: Loading CIFAR10 data...
+: [ Info: Training...
+: Progress: 100%|█████████████████████████████████████████| Time: 0:00:57
+: 
+#+begin_example
+┌ Info: Model:
+│   trained =
+│    Chain(
+│      Dense(3072 => 200, relu),             # 614_600 parameters
+│      Dense(200 => 150, relu),              # 30_150 parameters
+│      Dense(150 => 10),                     # 1_510 parameters
+│      NNlib.softmax,
+└    )                   # Total: 6 arrays, 646_260 parameters, 2.466 MiB.
+┌ Info: Accuracy:
+│   accuracy(trained, train) = 51.56
+└   accuracy(trained, test) = 48.02
+#+end_example
+[[file:./.ob-jupyter/ae55adfec9f4b09981db7dd727ce96e75292685a.svg]]
+:END:
