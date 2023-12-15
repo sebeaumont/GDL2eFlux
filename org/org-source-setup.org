@@ -1,3 +1,4 @@
 #+BIBLIOGRAPHY: ../citations.bib
 #+STARTUP: inlineimages overview latexpreview indent entitiespretty 
 #+PROPERTY: header-args:jupyter-julia :session jl :async yes :kernel gdl2eflux-1.9
+#+OPTIONS: num:3
