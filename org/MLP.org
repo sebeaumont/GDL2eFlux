@@ -38,25 +38,10 @@ end
 #+RESULTS:
 : onehotlabels (generic function with 1 method)
 
-*** Flatten image data into vectors
-#+begin_src jupyter-julia
-function vecfeatures(data::CIFAR10)
-    # TODO make this generic to data shapes
-    reshape(data.features, 32^2 * 3, :)
-end
-#+end_src
-
-#+RESULTS:
-: vecfeatures (generic function with 1 method)
-
 *** Dataloader
 #+begin_src jupyter-julia
-function loader(data::CIFAR10; batchsize, flatten)
-    if flatten
-        x = vecfeatures(data)
-    else
-        x = data
-    end
+function loader(data::CIFAR10; batchsize)
+    x = data.features
     y = onehotlabels(data)
     Flux.DataLoader((x, y); batchsize, shuffle=true)
 end
@@ -68,7 +53,7 @@ end
 *** Compute accuracy of predictions
 #+begin_src jupyter-julia
 function accuracy(model, data::CIFAR10, args::TrainingParams)
-    (x, y) = only(loader(data; batchsize=(length(data)), flatten=args.flatten))
+    (x, y) = only(loader(data; batchsize=(length(data))))
     y_hat = model(x)
     iscorrect = Flux.onecold(y_hat) .== Flux.onecold(y)
     round(100 * mean(iscorrect); digits=2)
@@ -83,22 +68,21 @@ We provide a set of training /hyperparameters/ but prefer to call these training
 parameters.
 #+begin_src jupyter-julia
 struct TrainingParams
-    flatten   :: Bool
     batchsize :: Int
     epochs    :: Int
     learnrate :: Float64
 end
 
-# constructor with defaults
-function trainparams(;flatten::Bool=false, batchsize::Int, epochs::Int, learnrate::Float64)
-    TrainingParams(flatten, batchsize, epochs, learnrate)
+# constructor with keyword args
+function trainparams(;batchsize::Int, epochs::Int, learnrate::Float64)
+    TrainingParams(batchsize, epochs, learnrate)
 end
 
-# TODO paramterise: batchsize, flatten, epochs, training rate
+# TODO paramterise: batchsize, epochs, training rate
 function trainwith(model, train_data::CIFAR10, args::TrainingParams)
     @info "trainwith" args
     # loader
-    train_loader = loader(train_data, batchsize=args.batchsize, flatten=args.flatten)
+    train_loader = loader(train_data, batchsize=args.batchsize)
     # optimizer state with training rate
     opt_state = Flux.setup(Adam(args.learnrate), model)
     losses = [] # keep track of loss at each epoch
@@ -108,7 +92,7 @@ function trainwith(model, train_data::CIFAR10, args::TrainingParams)
             # compute loss and gradients
             l, gs = Flux.withgradient(m -> Flux.crossentropy(m(x), y), model)
             # update model parameters
-            Flux.update!(opt_state, model, gs[1]) # if gs are gradients what is [1]?
+            Flux.update!(opt_state, model, gs[1]) # see: withgradient
             # accumulate losses for logging
             push!(losses, l)
         end
@@ -155,7 +139,8 @@ end
    
 #+begin_src jupyter-julia
 function simplemodel()
-    Chain(Dense(32^2 * 3 => 200, relu),
+    Chain(MLUtils.flatten,
+          Dense(32^2 * 3 => 200, relu),
           Dense(200 => 150, relu),
           Dense(150 => 10),
           softmax)
@@ -166,12 +151,10 @@ end
 : simplemodel (generic function with 1 method)
 
 
-
 ** Train and test the results of simple model
 #+begin_src jupyter-julia
 trainandtest(simplemodel(),
-             trainparams(flatten=true,
-                         batchsize=32,
+             trainparams(batchsize=32,
                          epochs=10,
                          learnrate=5e-4))
 #+end_src
@@ -182,22 +165,23 @@ trainandtest(simplemodel(),
 : [ Info: Training...
 : ┌ Info: trainwith
 : └   args = TrainingParams(true, 32, 10, 0.0005)
-: Progress: 100%|█████████████████████████████████████████| Time: 0:01:06
+: Progress: 100%|█████████████████████████████████████████| Time: 0:01:09
 : 
 #+begin_example
 ┌ Info: Model:
 │   trained =
 │    Chain(
+│      MLUtils.flatten,
 │      Dense(3072 => 200, relu),             # 614_600 parameters
 │      Dense(200 => 150, relu),              # 30_150 parameters
 │      Dense(150 => 10),                     # 1_510 parameters
 │      NNlib.softmax,
 └    )                   # Total: 6 arrays, 646_260 parameters, 2.466 MiB.
 ┌ Info: Accuracy:
-│   accuracy(trained, train, tparam) = 52.28
-└   accuracy(trained, test, tparam) = 48.64
+│   accuracy(trained, train, tparam) = 52.26
+└   accuracy(trained, test, tparam) = 49.17
 #+end_example
-[[file:./.ob-jupyter/c5327efd8b2a046ca43d0ccbbaf2807bdb4959a4.svg]]
+[[file:./.ob-jupyter/3e6e9a275e6aee6e9edfd0d6b62f20385063f70f.svg]]
 :END:
 
 ** The convolutional model (CNN)
@@ -233,3 +217,48 @@ end
 
 #+RESULTS:
 : cnnmodel (generic function with 1 method)
+** Train and test the convolutional model
+#+begin_src jupyter-julia
+trainandtest(cnnmodel(),
+             trainparams(batchsize=32,
+                         epochs=10,
+                         learnrate=5e-4))
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+: [ Info: Loading CIFAR10 data...
+: [ Info: Training...
+: ┌ Info: trainwith
+: └   args = TrainingParams(false, 32, 10, 0.0005)
+: Progress: 100%|█████████████████████████████████████████| Time: 0:27:36
+: 
+#+begin_example
+┌ Info: Model:
+│   trained =
+│    Chain(
+│      Conv((3, 3), 3 => 32, pad=1),         # 896 parameters
+│      BatchNorm(32, rrelu),                 # 64 parameters, plus 64
+│      Conv((3, 3), 32 => 32, pad=1, stride=2),  # 9_248 parameters
+│      BatchNorm(32, rrelu),                 # 64 parameters, plus 64
+│      Conv((3, 3), 32 => 64, pad=1),        # 18_496 parameters
+│      BatchNorm(64, rrelu),                 # 128 parameters, plus 128
+│      Conv((3, 3), 64 => 64, pad=1, stride=2),  # 36_928 parameters
+│      BatchNorm(64, rrelu),                 # 128 parameters, plus 128
+│      MLUtils.flatten,
+│      Dense(4096 => 128),                   # 524_416 parameters
+│      BatchNorm(128, rrelu),                # 256 parameters, plus 256
+│      Dropout(0.5),
+│      Dense(128 => 10),                     # 1_290 parameters
+│      NNlib.softmax,
+│    )         # Total: 22 trainable arrays, 591_914 parameters,
+└              # plus 10 non-trainable, 640 parameters, summarysize 2.263 MiB.
+┌ Info: Accuracy:
+│   accuracy(trained, train, tparam) = 84.83
+└   accuracy(trained, test, tparam) = 73.26
+#+end_example
+[[file:./.ob-jupyter/f376f38c265001ad98cebd74b6eca0c6b5a0266d.svg]]
+:END:
+
+
+
