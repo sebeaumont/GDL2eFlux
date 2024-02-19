@@ -2,7 +2,9 @@
 NOTEBOOKDIR := notebooks
 VPATH = org:
 
-NOTEBOOKS := $(addprefix $(NOTEBOOKDIR)/,MLP.ipynb XOR.ipynb)
+TARGETS := MLP.ipynb XOR.ipynb
+
+NOTEBOOKS := $(addprefix $(NOTEBOOKDIR)/,$(TARGETS))
 
 $(NOTEBOOKDIR)/%.ipynb : %.org
 	pandoc -f org -t ipynb -o $@ $<
