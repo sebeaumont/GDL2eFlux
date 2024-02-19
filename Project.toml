@@ -1,7 +1,7 @@
 name = "GDL2eFlux"
 uuid = "6ad08ebd-07ea-4b16-88ff-6ff631b4cd48"
 authors = ["Simon Beaumont <datalligator@icloud.com>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 AppleAccelerate = "13e28ba4-7ad8-5781-acae-3021b1ed3924"
