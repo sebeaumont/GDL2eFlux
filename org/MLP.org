@@ -4,7 +4,6 @@
 #+SETUPFILE: org-source-setup.org
 
 * GDL2e Chapter 2 Examples
-
 ** Some basic utility functions
 *** Flux and required packages.
 #+begin_src jupyter-julia
